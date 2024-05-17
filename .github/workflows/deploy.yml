@@ -9,6 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
     - name: Checkout repository
       uses: actions/checkout@v3
 
@@ -39,7 +44,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          docker load < my-website.tar.gz
+          gunzip < my-website.tar.gz | docker load
           docker stop my-website || true
           docker rm my-website || true
           docker run -d --name my-website -p 80:80 my-website:latest
