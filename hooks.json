@@ -1,0 +1,9 @@
+[
+    {
+      "id": "deploy",
+      "execute-command": "/app/update.sh",
+      "command-working-directory": "/app",
+      "response-message": "Deployment started!"
+    }
+  ]
+  

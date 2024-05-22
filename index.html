@@ -3,49 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witzige Seite</title>
+    <title>Fang das Quadrat</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f8ff;
-            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-        }
-        .container {
-            margin-top: 50px;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
         h1 {
+            font-family: 'Luckiest Guy', cursive;
+            color: #ff4500;
             font-size: 3em;
-            color: #ff6347;
+            margin-bottom: 20px;
         }
-        p {
-            font-size: 1.5em;
-            color: #4682b4;
+        #gameArea {
+            position: relative;
+            width: 80%;
+            height: 80%;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            overflow: hidden;
         }
-        .joke {
-            background-color: #d7ca51;
-            border: 2px solid #ffeb3b;
-            display: inline-block;
-            padding: 20px;
-            margin: 20px auto;
-            border-radius: 10px;
+        #square {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ff0000;
+            cursor: pointer;
         }
-        .emoji {
-            font-size: 2em;
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+        }
+        #level {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Willkommen auf der Witzigen Seite ggg </h1>
-        <p>Hier ist dein täglicher Witz 1:</p>
-        <div class="joke">
-            <p>Warum können Geister so schlecht lügen?</p>
-            <p>Weil man durch sie hindurchsieht! <span class="emoji">👻</span></p>
-        </div>
-        <p>Folg uns für mehr Lachkrämpfe! <span class="emoji">😂</span></p>
+    <h1>Ein Game zu bekloppt werden</h1>
+    <div id="gameArea">
+        <div id="score">Punkte: 0</div>
+        <div id="level">Level: 1</div>
+        <div id="square"></div>
     </div>
+
+    <script>
+        const gameArea = document.getElementById('gameArea');
+        const square = document.getElementById('square');
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('level');
+        let score = 0;
+        let level = 1;
+        let moveInterval = 1000;
+
+        function getRandomPosition() {
+            const x = Math.random() * (gameArea.clientWidth - square.clientWidth);
+            const y = Math.random() * (gameArea.clientHeight - square.clientHeight);
+            return { x, y };
+        }
+
+        function moveSquare() {
+            const { x, y } = getRandomPosition();
+            square.style.left = `${x}px`;
+            square.style.top = `${y}px`;
+        }
+
+        function updateLevel() {
+            level += 1;
+            levelDisplay.textContent = `Level: ${level}`;
+            moveInterval *= 0.9;  // Geschwindigkeit erhöhen (Interval verkürzen)
+            clearInterval(moveSquareInterval);
+            moveSquareInterval = setInterval(moveSquare, moveInterval);
+        }
+
+        square.addEventListener('click', () => {
+            score += 1;
+            scoreDisplay.textContent = `Punkte: ${score}`;
+            moveSquare();
+            if (score % 10 === 0) {  // Alle 10 Punkte Level erhöhen
+                updateLevel();
+            }
+        });
+
+        let moveSquareInterval = setInterval(moveSquare, moveInterval);
+    </script>
 </body>
 </html>
