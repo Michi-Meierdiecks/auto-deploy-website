@@ -3,102 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fang das Quadrat</title>
+    <title>Einkaufsliste</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
-
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #c40b0b;
             font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black; /* Hintergrundfarbe schwarz */
+            color: white; /* Textfarbe weiß */
         }
+
         h1 {
-            font-family: 'Luckiest Guy', cursive;
-            color: #17d637;
-            font-size: 3em;
+            color: #4CAF50;
+        }
+
+        form {
+            max-width: 100%;
             margin-bottom: 20px;
         }
-        #gameArea {
-            position: relative;
-            width: 80%;
-            height: 80%;
-            background-color: #f8f8f8;
-            border: 2px solid #f5f0f0;
-            overflow: hidden;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        #square {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-color: #090412;
-            cursor: pointer;
+
+        table, th, td {
+            border: 1px solid #ddd;
         }
-        #score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 20px;
+
+        th, td {
+            padding: 10px;
+            text-align: left;
         }
-        #level {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: red; /* Durchgestrichener Text in rot */
+        }
+
+        @media (max-width: 600px) {
+            th, td {
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Sex ist witzig</h1>
-    <div id="gameArea">
-        <div id="score">Punkte: 0</div>
-        <div id="level">Level: 1</div>
-        <div id="square"></div>
-    </div>
+
+    <h1>Einkaufsliste</h1>
+
+    <form id="einkaufsForm">
+        <label for="artikel">Artikel:</label>
+        <input type="text" id="artikel" name="artikel" required>
+
+        <label for="menge">Menge:</label>
+        <input type="text" id="menge" name="menge" required>
+
+        <button type="button" onclick="addToList()">Hinzufügen</button>
+    </form>
+
+    <table id="einkaufsListe">
+        <thead>
+            <tr>
+                <th>Artikel</th>
+                <th>Menge</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hier werden die Einkaufsliste-Elemente dynamisch eingefügt -->
+        </tbody>
+    </table>
 
     <script>
-        const gameArea = document.getElementById('gameArea');
-        const square = document.getElementById('square');
-        const scoreDisplay = document.getElementById('score');
-        const levelDisplay = document.getElementById('level');
-        let score = 0;
-        let level = 1;
-        let moveInterval = 1000;
+        function addToList() {
+            var artikel = document.getElementById("artikel").value;
+            var menge = document.getElementById("menge").value;
 
-        function getRandomPosition() {
-            const x = Math.random() * (gameArea.clientWidth - square.clientWidth);
-            const y = Math.random() * (gameArea.clientHeight - square.clientHeight);
-            return { x, y };
-        }
+            if (artikel && menge) {
+                var table = document.getElementById("einkaufsListe");
+                var newRow = table.insertRow(table.rows.length);
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
 
-        function moveSquare() {
-            const { x, y } = getRandomPosition();
-            square.style.left = `${x}px`;
-            square.style.top = `${y}px`;
-        }
+                cell1.innerHTML = '<span id="item">' + artikel + '</span>'; // ID für Durchstreichung hinzugefügt
+                cell2.innerHTML = menge;
+                cell3.innerHTML = '<button onclick="strikeThrough(this)">Streichen</button> ' +
+                                  '<button onclick="deleteRow(this)">Löschen</button>';
 
-        function updateLevel() {
-            level += 1;
-            levelDisplay.textContent = `Level: ${level}`;
-            moveInterval *= 0.9;  // Geschwindigkeit erhöhen (Interval verkürzen)
-            clearInterval(moveSquareInterval);
-            moveSquareInterval = setInterval(moveSquare, moveInterval);
-        }
-
-        square.addEventListener('click', () => {
-            score += 1;
-            scoreDisplay.textContent = `Punkte: ${score}`;
-            moveSquare();
-            if (score % 10 === 0) {  // Alle 10 Punkte Level erhöhen
-                updateLevel();
+                // Formularfelder leeren
+                document.getElementById("artikel").value = "";
+                document.getElementById("menge").value = "";
             }
-        });
+        }
 
-        let moveSquareInterval = setInterval(moveSquare, moveInterval);
+        function strikeThrough(button) {
+            var row = button.parentNode.parentNode;
+            var itemCell = row.cells[0].getElementsByTagName('span')[0];
+            itemCell.classList.toggle('strikethrough');
+        }
+
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
     </script>
+
 </body>
 </html>
